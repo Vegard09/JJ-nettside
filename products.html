@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produkter — Jørn Jensen Lærhandel</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .page-layout {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 0;
+      min-height: 70vh;
+    }
+    .sidebar {
+      background: var(--cream-light);
+      border-right: 1px solid var(--border);
+      padding: 1.25rem;
+      position: sticky;
+      top: 60px;
+      height: calc(100vh - 60px);
+      overflow-y: auto;
+    }
+    .sidebar-title { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-mid); margin-bottom: 0.85rem; }
+    .search-input {
+      width: 100%;
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.85rem;
+      font-family: var(--font);
+      margin-bottom: 1.25rem;
+      color: var(--text-dark);
+    }
+    .search-input:focus { outline: none; border-color: var(--brown-dark); }
+    .filter-group { margin-bottom: 1.25rem; }
+    .filter-group-title { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--brown-mid); margin-bottom: 0.5rem; }
+    .filter-item { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; cursor: pointer; }
+    .filter-item input[type="radio"] { accent-color: var(--brown-dark); }
+    .filter-item label { font-size: 0.82rem; color: var(--text-mid); cursor: pointer; }
+    .filter-count { font-size: 0.7rem; color: var(--text-muted); margin-left: auto; }
+
+    .main-area { padding: 1.5rem; }
+    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+    .result-count { font-size: 0.85rem; color: var(--text-mid); }
+    .sort-select {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.82rem;
+      font-family: var(--font);
+      color: var(--text-dark);
+      cursor: pointer;
+    }
+    .product-grid-main {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .pagination { display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem; }
+    .page-btn {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: var(--text-mid);
+      transition: background 0.15s;
+    }
+    .page-btn:hover, .page-btn.active { background: var(--brown-dark); color: var(--cream-dark); border-color: var(--brown-dark); }
+
+    .empty-state { text-align: center; padding: 3rem; color: var(--text-muted); }
+    .empty-state h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+
+    @media (max-width: 768px) {
+      .page-layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+      .product-grid-main { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header"></header>
+
+  <div class="page-layout">
+    <aside class="sidebar">
+      <div class="sidebar-title">Filter</div>
+      <input class="search-input" id="search-input" type="text" placeholder="Søk etter produkt...">
+
+      <div class="filter-group">
+        <div class="filter-group-title">Kategori</div>
+        <div id="category-filters"></div>
+      </div>
+
+      <div class="filter-group" id="subcategory-group" style="display:none">
+        <div class="filter-group-title">Underkategori</div>
+        <div id="subcategory-filters"></div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <div class="top-bar">
+        <span class="result-count" id="result-count">Laster produkter...</span>
+        <select class="sort-select" id="sort-select">
+          <option value="default">Sorter: Standard</option>
+          <option value="price-asc">Pris: Lav til høy</option>
+          <option value="price-desc">Pris: Høy til lav</option>
+          <option value="name-asc">Navn: A til Å</option>
+        </select>
+      </div>
+      <div class="product-grid-main" id="product-grid"></div>
+      <div class="pagination" id="pagination"></div>
+    </main>
+  </div>
+
+  <footer class="site-footer"></footer>
+  <div class="site-footer-bottom"></div>
+
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    const PER_PAGE = 18;
+    let currentPage = 1;
+    let activeCategory = null;
+    let activeSubcategory = null;
+    let searchQuery = '';
+    let sortOrder = 'default';
+
+    function getFilteredProducts() {
+      let list = PRODUCTS;
+      if (searchQuery) list = searchProducts(searchQuery);
+      if (activeCategory) list = list.filter(p => p.category === activeCategory);
+      if (activeSubcategory) list = list.filter(p => p.subcategory === activeSubcategory);
+      switch (sortOrder) {
+        case 'price-asc':  list = [...list].sort((a,b) => a.price - b.price); break;
+        case 'price-desc': list = [...list].sort((a,b) => b.price - a.price); break;
+        case 'name-asc':   list = [...list].sort((a,b) => a.name.localeCompare(b.name, 'nb')); break;
+      }
+      return list;
+    }
+
+    function renderProducts() {
+      const all = getFilteredProducts();
+      const total = all.length;
+      const start = (currentPage - 1) * PER_PAGE;
+      const page = all.slice(start, start + PER_PAGE);
+
+      document.getElementById('result-count').textContent =
+        `Viser ${page.length} av ${total} produkter` + (activeCategory ? ` i "${categoryLabel(activeCategory)}"` : '');
+
+      const grid = document.getElementById('product-grid');
+      if (page.length === 0) {
+        grid.innerHTML = '<div class="empty-state"><h3>Ingen produkter funnet</h3><p>Prøv et annet søk eller filter.</p></div>';
+      } else {
+        grid.innerHTML = page.map(p => productCardHTML(p)).join('');
+      }
+      renderPagination(total);
+    }
+
+    function renderPagination(total) {
+      const pages = Math.ceil(total / PER_PAGE);
+      const el = document.getElementById('pagination');
+      if (pages <= 1) { el.innerHTML = ''; return; }
+      let html = '';
+      if (currentPage > 1) html += `<button class="page-btn" onclick="goPage(${currentPage-1})">&#8592;</button>`;
+      for (let i = 1; i <= pages; i++) {
+        html += `<button class="page-btn${i===currentPage?' active':''}" onclick="goPage(${i})">${i}</button>`;
+      }
+      if (currentPage < pages) html += `<button class="page-btn" onclick="goPage(${currentPage+1})">&#8594;</button>`;
+      el.innerHTML = html;
+    }
+
+    function goPage(n) { currentPage = n; renderProducts(); window.scrollTo(0, 0); }
+
+    function renderCategoryFilters() {
+      const cats = getCategories();
+      const el = document.getElementById('category-filters');
+      el.innerHTML = `
+        <div class="filter-item">
+          <input type="radio" name="cat" id="cat-all" value="" ${!activeCategory?'checked':''} onchange="setCategory('')">
+          <label for="cat-all">Alle kategorier</label>
+          <span class="filter-count">${PRODUCTS.length}</span>
+        </div>
+        ${cats.map(cat => `
+          <div class="filter-item">
+            <input type="radio" name="cat" id="cat-${cat}" value="${cat}" ${activeCategory===cat?'checked':''} onchange="setCategory('${cat}')">
+            <label for="cat-${cat}">${categoryLabel(cat)}</label>
+            <span class="filter-count">${PRODUCTS.filter(p=>p.category===cat).length}</span>
+          </div>
+        `).join('')}
+      `;
+    }
+
+    function renderSubcategoryFilters() {
+      if (!activeCategory) {
+        document.getElementById('subcategory-group').style.display = 'none';
+        return;
+      }
+      const subs = getSubcategories(activeCategory);
+      document.getElementById('subcategory-group').style.display = 'block';
+      document.getElementById('subcategory-filters').innerHTML = `
+        <div class="filter-item">
+          <input type="radio" name="sub" id="sub-all" value="" ${!activeSubcategory?'checked':''} onchange="setSubcategory('')">
+          <label for="sub-all">Alle</label>
+        </div>
+        ${subs.map(sub => `
+          <div class="filter-item">
+            <input type="radio" name="sub" id="sub-${sub}" value="${sub}" ${activeSubcategory===sub?'checked':''} onchange="setSubcategory('${sub}')">
+            <label for="sub-${sub}">${subcategoryLabel(sub)}</label>
+            <span class="filter-count">${PRODUCTS.filter(p=>p.subcategory===sub).length}</span>
+          </div>
+        `).join('')}
+      `;
+    }
+
+    function setCategory(cat) {
+      activeCategory = cat || null;
+      activeSubcategory = null;
+      currentPage = 1;
+      renderCategoryFilters();
+      renderSubcategoryFilters();
+      renderProducts();
+    }
+
+    function setSubcategory(sub) {
+      activeSubcategory = sub || null;
+      currentPage = 1;
+      renderSubcategoryFilters();
+      renderProducts();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const cat = params.get('category');
+      if (cat) activeCategory = cat;
+
+      renderCategoryFilters();
+      renderSubcategoryFilters();
+      renderProducts();
+
+      document.getElementById('search-input').addEventListener('input', e => {
+        searchQuery = e.target.value.trim();
+        currentPage = 1;
+        activeCategory = null;
+        activeSubcategory = null;
+        renderCategoryFilters();
+        renderSubcategoryFilters();
+        renderProducts();
+      });
+
+      document.getElementById('sort-select').addEventListener('change', e => {
+        sortOrder = e.target.value;
+        currentPage = 1;
+        renderProducts();
+      });
+    });
+  </script>
+</body>
+</html>
