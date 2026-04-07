@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Takk for din henvendelse — Jørn Jensen Lærhandel</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .takk-page {
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+    .takk-box { max-width: 520px; }
+    .takk-icon {
+      width: 64px; height: 64px;
+      background: var(--cream-mid);
+      border: 2px solid var(--brown-light);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 1.75rem;
+    }
+    .takk-box h1 { font-size: 1.75rem; font-weight: 800; color: var(--text-dark); margin-bottom: 0.75rem; }
+    .takk-box p { font-size: 1rem; color: var(--text-mid); line-height: 1.7; margin-bottom: 0.5rem; }
+    .takk-actions { display: flex; gap: 0.75rem; justify-content: center; margin-top: 2rem; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header"></header>
+
+  <div class="takk-page">
+    <div class="takk-box">
+      <div class="takk-icon">&#10003;</div>
+      <h1>Takk for din henvendelse!</h1>
+      <p>Vi har mottatt din bestillingsforespørsel og vil ta kontakt med deg så snart som mulig.</p>
+      <p>Du vil motta en bekreftelse og faktura på e-post.</p>
+      <div class="takk-actions">
+        <a href="products.html" class="btn-primary">Fortsett å handle</a>
+        <a href="index.html" class="btn-secondary" style="color:var(--brown-dark);border-color:var(--brown-dark)">Til forsiden</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer"></footer>
+  <div class="site-footer-bottom"></div>
+
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', clearCart);
+  </script>
+</body>
+</html>
