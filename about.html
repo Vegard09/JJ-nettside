@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Om oss — Jørn Jensen Lærhandel</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .about-layout {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    .about-text h1 { font-size: 2rem; font-weight: 800; color: var(--text-dark); margin-bottom: 1rem; }
+    .about-text p { font-size: 0.95rem; color: var(--text-mid); line-height: 1.75; margin-bottom: 0.85rem; }
+
+    .hours-box {
+      background: var(--cream-mid);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+    }
+    .hours-box h3 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-mid); margin-bottom: 0.85rem; }
+    .hours-row { display: flex; justify-content: space-between; font-size: 0.9rem; padding: 0.4rem 0; border-bottom: 1px solid var(--border); }
+    .hours-row:last-child { border-bottom: none; }
+    .hours-row .day { color: var(--text-mid); }
+    .hours-row .time { font-weight: 600; color: var(--text-dark); }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+    }
+    .contact-info h3 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-mid); margin-bottom: 0.85rem; }
+    .contact-item { display: flex; flex-direction: column; margin-bottom: 0.75rem; }
+    .contact-item .label { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.15rem; }
+    .contact-item a, .contact-item span { font-size: 0.95rem; color: var(--text-dark); font-weight: 500; }
+    .contact-item a:hover { color: var(--brown-dark); }
+
+    .social-links { display: flex; gap: 0.75rem; margin-top: 0.5rem; }
+    .social-link {
+      background: var(--brown-dark);
+      color: var(--cream-dark);
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      transition: background 0.15s;
+    }
+    .social-link:hover { background: #5a4738; }
+
+    .map-section { margin-bottom: 2.5rem; }
+    .map-section h3 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-mid); margin-bottom: 0.85rem; }
+    .map-embed { border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+
+    .contact-form-section { max-width: 560px; }
+    .contact-form-section h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); margin-bottom: 1.25rem; }
+    .contact-submit-btn { background: var(--brown-dark); color: var(--cream-dark); border: none; padding: 0.7rem 1.5rem; border-radius: 7px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+    .contact-submit-btn:hover { background: #5a4738; }
+
+    @media (max-width: 768px) {
+      .about-grid, .contact-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header"></header>
+
+  <div class="about-layout">
+
+    <div class="about-grid">
+      <div class="about-text">
+        <h1>Om oss</h1>
+        <p>Jørn Jensen Lærhandel AS er en norsk familiebedrift med lang tradisjon innen lær og håndverk. Vi tilbyr kvalitetsmaterialer for knivmaking og lærarbeid — alt fra knivblader og skaftmaterialer til lær, verktøy og kjemikalier.</p>
+        <p>Vi holder til på Stallbakken 13 i Rælingen, Akershus. Du er hjertelig velkommen til å besøke oss i åpningstidene, eller ta kontakt på telefon og e-post.</p>
+      </div>
+      <div class="hours-box">
+        <h3>Åpningstider</h3>
+        <div class="hours-row"><span class="day">Mandag</span><span class="time">09:00 – 16:00</span></div>
+        <div class="hours-row"><span class="day">Tirsdag</span><span class="time">09:00 – 16:00</span></div>
+        <div class="hours-row"><span class="day">Onsdag</span><span class="time">09:00 – 16:00</span></div>
+        <div class="hours-row"><span class="day">Torsdag</span><span class="time">09:00 – 16:00</span></div>
+        <div class="hours-row"><span class="day">Fredag</span><span class="time">09:00 – 16:00</span></div>
+        <div class="hours-row"><span class="day">Lørdag</span><span class="time">09:00 – 14:00</span></div>
+        <div class="hours-row"><span class="day">Søndag</span><span class="time">Stengt</span></div>
+      </div>
+    </div>
+
+    <div class="contact-grid" id="kontakt">
+      <div class="contact-info">
+        <h3>Kontaktinformasjon</h3>
+        <div class="contact-item">
+          <span class="label">Adresse</span>
+          <span>Stallbakken 13, 2005 Rælingen, Akershus</span>
+        </div>
+        <div class="contact-item">
+          <span class="label">Telefon</span>
+          <a href="tel:+4764841010">+47 64 84 10 10</a>
+        </div>
+        <div class="contact-item">
+          <span class="label">E-post</span>
+          <a href="mailto:firmapost@jjensen.no">firmapost@jjensen.no</a>
+        </div>
+        <div style="margin-top:1rem">
+          <div class="label" style="font-size:0.72rem;color:var(--text-muted);margin-bottom:0.5rem">Følg oss</div>
+          <div class="social-links">
+            <a class="social-link" href="https://www.facebook.com/groups/jjensen.no" target="_blank">Facebook</a>
+            <a class="social-link" href="https://www.instagram.com/jjensen.no" target="_blank">Instagram</a>
+            <a class="social-link" href="https://www.youtube.com/@jjensen.no" target="_blank">YouTube</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form-section">
+        <h3>Send oss en melding</h3>
+        <form action="https://formsubmit.co/firmapost@jjensen.no" method="POST">
+          <input type="hidden" name="_subject" value="Kontaktmelding fra jjensen.no">
+          <input type="hidden" name="_next" value="takk.html">
+          <input type="hidden" name="_captcha" value="false">
+          <div class="form-group">
+            <label for="c-navn">Navn <span class="required">*</span></label>
+            <input type="text" id="c-navn" name="Navn" required placeholder="Ola Nordmann">
+          </div>
+          <div class="form-group">
+            <label for="c-epost">E-post <span class="required">*</span></label>
+            <input type="email" id="c-epost" name="E-post" required placeholder="ola@epost.no">
+          </div>
+          <div class="form-group">
+            <label for="c-melding">Melding <span class="required">*</span></label>
+            <textarea id="c-melding" name="Melding" required placeholder="Hva lurer du på?"></textarea>
+          </div>
+          <button type="submit" class="contact-submit-btn">Send melding</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="map-section">
+      <h3>Finn oss</h3>
+      <div class="map-embed">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2000!2d11.028!3d59.946!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sStallbakken+13%2C+2005+R%C3%A6lingen!5e0!3m2!1sno!2sno!4v1"
+          width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade" title="Kart til Jørn Jensen Lærhandel"></iframe>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="site-footer"></footer>
+  <div class="site-footer-bottom"></div>
+
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
