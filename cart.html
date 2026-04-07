@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Handlekurv — Jørn Jensen Lærhandel</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .cart-layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 2rem;
+      padding: 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .cart-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-dark); }
+
+    .cart-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+    }
+    .cart-item-img {
+      width: 72px; height: 72px;
+      background: var(--cream-mid);
+      border-radius: 8px;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .cart-item-img img { max-width: 64px; max-height: 64px; object-fit: contain; }
+    .cart-item-info { flex: 1; }
+    .cart-item-name { font-size: 0.95rem; font-weight: 600; color: var(--text-dark); margin-bottom: 0.2rem; }
+    .cart-item-unit-price { font-size: 0.8rem; color: var(--text-muted); }
+    .qty-row { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; }
+    .qty-btn {
+      background: var(--cream-mid);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      width: 28px; height: 28px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--brown-dark);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .qty-btn:hover { background: var(--border); }
+    .qty-val { font-size: 0.9rem; font-weight: 600; min-width: 20px; text-align: center; }
+    .cart-item-price { font-size: 1rem; font-weight: 700; color: var(--brown-dark); white-space: nowrap; }
+    .remove-btn { background: none; font-size: 1.1rem; color: #ccc; padding: 0.2rem; cursor: pointer; border: none; }
+    .remove-btn:hover { color: var(--red); }
+
+    .empty-cart { text-align: center; padding: 3rem 1rem; }
+    .empty-cart h3 { font-size: 1.2rem; margin-bottom: 0.75rem; color: var(--text-mid); }
+    .empty-cart p { color: var(--text-muted); margin-bottom: 1.5rem; }
+
+    .order-box {
+      background: var(--cream-light);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .summary-row { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-mid); margin-bottom: 0.4rem; }
+    .summary-divider { border: none; border-top: 1px solid var(--border); margin: 0.75rem 0; }
+    .summary-total { display: flex; justify-content: space-between; font-size: 1rem; font-weight: 700; color: var(--text-dark); margin-bottom: 1.5rem; }
+
+    .order-form-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-mid); margin-bottom: 1rem; }
+
+    .submit-btn { width: 100%; background: var(--brown-dark); color: var(--cream-dark); border: none; padding: 0.85rem; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.15s; margin-top: 0.25rem; }
+    .submit-btn:hover { background: #5a4738; }
+    .submit-note { font-size: 0.78rem; color: var(--text-muted); text-align: center; margin-top: 0.75rem; line-height: 1.5; }
+
+    @media (max-width: 768px) {
+      .cart-layout { grid-template-columns: 1fr; padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header"></header>
+
+  <div class="cart-layout">
+    <div>
+      <h1 class="cart-title">Handlekurv</h1>
+      <div id="cart-items"></div>
+    </div>
+
+    <div>
+      <div class="order-box">
+        <div class="section-label" style="margin-bottom:0.75rem">Oppsummering</div>
+        <div id="summary-lines"></div>
+        <hr class="summary-divider">
+        <div class="summary-total">
+          <span>Totalt</span>
+          <span id="total-price">Kr 0,-</span>
+        </div>
+
+        <div class="order-form-title">Kontaktopplysninger</div>
+        <form id="order-form"
+              action="https://formsubmit.co/firmapost@jjensen.no"
+              method="POST">
+          <input type="hidden" name="_subject" value="Ny bestillingsforespørsel fra jjensen.no">
+          <input type="hidden" name="_next" value="takk.html">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="Bestilling" id="bestilling-field">
+
+          <div class="form-group">
+            <label for="navn">Navn <span class="required">*</span></label>
+            <input type="text" id="navn" name="Navn" required placeholder="Ola Nordmann">
+          </div>
+          <div class="form-group">
+            <label for="epost">E-post <span class="required">*</span></label>
+            <input type="email" id="epost" name="E-post" required placeholder="ola@epost.no">
+          </div>
+          <div class="form-group">
+            <label for="telefon">Telefon</label>
+            <input type="tel" id="telefon" name="Telefon" placeholder="+47 000 00 000">
+          </div>
+          <div class="form-group">
+            <label for="adresse">Leveringsadresse <span class="required">*</span></label>
+            <input type="text" id="adresse" name="Adresse" required placeholder="Gateveien 1, 0000 By">
+          </div>
+          <div class="form-group">
+            <label for="melding">Melding / spørsmål</label>
+            <textarea id="melding" name="Melding" placeholder="Evt. spesielle ønsker, spørsmål om frakt osv."></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn">Send bestillingsforespørsel</button>
+          <p class="submit-note">Vi sender deg en bekreftelse og faktura på e-post. Ingen betaling på nettsiden.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer"></footer>
+  <div class="site-footer-bottom"></div>
+
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    function renderCart() {
+      const cart = getCart();
+      const itemsEl = document.getElementById('cart-items');
+      const summaryEl = document.getElementById('summary-lines');
+
+      if (cart.length === 0) {
+        itemsEl.innerHTML = `
+          <div class="empty-cart">
+            <h3>Handlekurven er tom</h3>
+            <p>Legg til produkter fra produktkatalogen.</p>
+            <a href="products.html" class="btn-primary">Se produkter</a>
+          </div>
+        `;
+        summaryEl.innerHTML = '';
+        document.getElementById('total-price').textContent = 'Kr 0,-';
+        document.getElementById('bestilling-field').value = '';
+        return;
+      }
+
+      itemsEl.innerHTML = cart.map(item => `
+        <div class="cart-item">
+          <div class="cart-item-img">
+            <img src="${item.image}" alt="${item.name}" loading="lazy">
+          </div>
+          <div class="cart-item-info">
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-unit-price">${formatPrice(item.price)}/stk</div>
+            <div class="qty-row">
+              <button class="qty-btn" onclick="changeQty('${item.id}', ${item.qty - 1})">−</button>
+              <span class="qty-val">${item.qty}</span>
+              <button class="qty-btn" onclick="changeQty('${item.id}', ${item.qty + 1})">+</button>
+            </div>
+          </div>
+          <span class="cart-item-price">${formatPrice(item.price * item.qty)}</span>
+          <button class="remove-btn" onclick="deleteItem('${item.id}')" title="Fjern">×</button>
+        </div>
+      `).join('');
+
+      summaryEl.innerHTML = cart.map(item =>
+        `<div class="summary-row"><span>${item.name} x${item.qty}</span><span>${formatPrice(item.price * item.qty)}</span></div>`
+      ).join('');
+
+      document.getElementById('total-price').textContent = formatPrice(getTotal());
+      document.getElementById('bestilling-field').value = formatCartForEmail();
+    }
+
+    function changeQty(id, qty) {
+      if (qty < 1) return;
+      updateQty(id, qty);
+      renderCart();
+    }
+
+    function deleteItem(id) {
+      removeItem(id);
+      renderCart();
+    }
+
+    document.getElementById('order-form').addEventListener('submit', function() {
+      document.getElementById('bestilling-field').value = formatCartForEmail();
+    });
+
+    document.addEventListener('DOMContentLoaded', renderCart);
+  </script>
+</body>
+</html>
