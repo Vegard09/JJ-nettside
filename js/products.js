@@ -23,7 +23,7 @@ const PRODUCTS = [
     oldPrice: null,
     image: BASE_IMG + 'web_images/direkteopplastet/676183fbd29e4_nakirikitchenknife7.png',
     description: 'Grønnsakskniv i VG-10 Damascus stål med ebenholts-skaft og mosaikk-pin.',
-    featured: false,
+    featured: true,
     inStock: true,
   },
   {
@@ -35,7 +35,7 @@ const PRODUCTS = [
     oldPrice: null,
     image: BASE_IMG + 'web_images/direkteopplastet/6761966de9e3e_Kiritsuke8.png',
     description: 'Allround kokkekniv i VG-10 Damascus stål med ebenholts-skaft.',
-    featured: false,
+    featured: true,
     inStock: true,
   },
   {
@@ -134,7 +134,7 @@ const PRODUCTS = [
     oldPrice: null,
     image: BASE_IMG + 'web_images/direkteopplastet/5f857c2d479b3_410lillayxan2500x357.jpg',
     description: 'Liten håndøks fra Gränsfors Bruks, perfekt for turer. Art.nr: 410.',
-    featured: false,
+    featured: true,
     inStock: true,
   },
   {
